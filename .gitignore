@@ -29,9 +29,14 @@ codegen/
 
 # Simulink autosave extension
 *.autosave
+*.asv
 
 # Simulink cache files
 *.slxc
 
 # Octave session info
 octave-workspace
+
+# Ignore zip
+*.zip
+
