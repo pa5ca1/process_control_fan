@@ -33,9 +33,9 @@ plot(1-lambda_11_array,'+-',"LineWidth",2,"MarkerSize",10);
 xlim([1,5])
 xticks([1,2,3,4,5])
 xticklabels({'6','7','8','9','10'});
-xlabel('Windspeed [m/s]','FontSize',16)
-ylabel('\lambda_{ii} and \lambda_{ij}','FontSize',16)
-lgd = legend({'\lambda_{ii}','\lambda_{ij}'},"FontSize",16);
+xlabel('$v_{wind}$ [m/s]','FontSize',16)
+ylabel('$\lambda_{ii}$ and $\lambda_{ij}$','FontSize',16)
+lgd = legend({'$\lambda_{ii}$','$\lambda_{ij}$'},"FontSize",14);
 lgd.Location = "best";
 
 cb = colorbar('Colormap', c);

@@ -1,4 +1,11 @@
 clc; clear; close all;
+
+%% Change everything to Latex
+set(groot,'defaulttextinterpreter','latex');  
+set(groot, 'defaultAxesTickLabelInterpreter','latex');  
+set(groot, 'defaultLegendInterpreter','latex');
+% Change font size
+set(groot,'defaultAxesFontSize',16)
 %% Paramters
 plot_bool = 1;
 
@@ -21,7 +28,7 @@ end
 % T_sum
 
 % Choose transfer function by choosing windspeed
-v_wind = 7;
+v_wind = 9;
 G_11 = table_tf(table_tf.wind_speed==v_wind,:).G_S{:}(1,1);
 G_22 = table_tf(table_tf.wind_speed==v_wind,:).G_S{:}(2,2);
 
@@ -30,6 +37,7 @@ t_linspace = linspace(0,100);
 inverted_tf_bool = 1;
 method_of_calculation = 'ZN_maxS';
 PID_11 = controller_design_fun(-G_11,t_linspace,plot_bool,method_of_calculation,inverted_tf_bool);
+
 % Calculation of PID_22
 t_linspace = linspace(0,100);
 method_of_calculation = 'T_sum';
@@ -55,14 +63,14 @@ PID_22 = controller_design_fun(G_22,t_linspace,plot_bool,method_of_calculation,i
 
 %% Simulations in Simulink
 % Setting amplitudes for pulse
-simP.A_beta = 10;
+simP.A_beta = 7;
 simP.A_alpha = -.1;
-simP.A_wind = -1;
+simP.A_wind = -2;
 
 % Determine if pulse of zero for inputs and pertubation
-simP.bool_wind = 0;
-simP.bool_alpha = 0;
 simP.bool_beta = 1;
+simP.bool_alpha = 0;
+simP.bool_wind = 0;
 
 % Simulation paramters
 simP.t_simulation = 2000; % Time for simulation [s]
@@ -106,35 +114,28 @@ PID_11_Sim = matlab_PID_paremters(PID_11);
 PID_11_Sim.N = .01;
 PID_22_Sim = matlab_PID_paremters(PID_22);
 PID_22_Sim.N = .01;
-simP.t_simulation = 400; % Time for simulation [s]
+simP.t_simulation = 1600; % Time for simulation [s]
 
-simP.wind_t = 0;
-simP.omega_t = 100;
-simP.Pg_t = 0;
-simP.omega_final = -200;
-simP.Pg_final = 0;
+simP.wind_t = 200;
+simP.noise_power_wind = [0];
+simP.wind_final = 0;
 
-[y,e,u,u_hat,r,t,simOut] = simulate_PID_closed_loop();
-if plot_bool
-    plot_PID_closed_loop(y,e,u,u_hat,r,t)
-end
 
-disp('##### Scenario B #####')
-disp(['Derivation from steady state u_1: ' , num2str(u_hat(end,1))])
-disp(['Derivation from steady state u_2: ' , num2str(u_hat(end,2))])
-
-simP.omega_t = 0;
 simP.Pg_t = 100;
-simP.omega_final = 0;
 simP.Pg_final = -1;
 
+simP.omega_t = 800;
+simP.omega_final = -200;
+
 [y,e,u,u_hat,r,t,simOut] = simulate_PID_closed_loop();
 if plot_bool
     plot_PID_closed_loop(y,e,u,u_hat,r,t)
 end
-disp('##### Scenario A #####')
-disp(['Derivation from steady state u_1: ' , num2str(u_hat(end,1))])
-disp(['Derivation from steady state u_2: ' , num2str(u_hat(end,2))])
+
+disp('##### Scenario step change #####')
+%disp(['Derivation from steady state u_1: ' , num2str(u_hat(end,1))])
+%disp(['Derivation from steady state u_2: ' , num2str(u_hat(end,2))])
+
 
 %% Relay Feedback Method
 simP.alpha_ref = 0;

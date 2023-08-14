@@ -50,6 +50,8 @@ if plot_bool
     % Plot T_sum
     xline(T_sum,'--','HandleVisibility','off',LineWidth=3)
     hold off;
+    legend('Location','best')
+    xlim([0,10])
 end
 
 end
