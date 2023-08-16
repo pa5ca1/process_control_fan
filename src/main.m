@@ -7,7 +7,7 @@ set(groot, 'defaultLegendInterpreter','latex');
 % Change font size
 set(groot,'defaultAxesFontSize',16)
 %% Paramters
-plot_bool = 1;
+plot_bool = 0;
 
 %% Transfer function
 % Store tf and RGA in a table
@@ -28,7 +28,7 @@ end
 % T_sum
 
 % Choose transfer function by choosing windspeed
-v_wind = 9;
+v_wind = 8;
 G_11 = table_tf(table_tf.wind_speed==v_wind,:).G_S{:}(1,1);
 G_22 = table_tf(table_tf.wind_speed==v_wind,:).G_S{:}(2,2);
 
@@ -36,6 +36,7 @@ G_22 = table_tf(table_tf.wind_speed==v_wind,:).G_S{:}(2,2);
 t_linspace = linspace(0,100);
 inverted_tf_bool = 1;
 method_of_calculation = 'ZN_maxS';
+%method_of_calculation = 'ZN_2p';
 PID_11 = controller_design_fun(-G_11,t_linspace,plot_bool,method_of_calculation,inverted_tf_bool);
 
 % Calculation of PID_22
@@ -62,8 +63,9 @@ PID_22 = controller_design_fun(G_22,t_linspace,plot_bool,method_of_calculation,i
 
 
 %% Simulations in Simulink
+v_wind = 8;
 % Setting amplitudes for pulse
-simP.A_beta = 7;
+simP.A_beta = 8;
 simP.A_alpha = -.1;
 simP.A_wind = -2;
 
@@ -108,6 +110,8 @@ end
 
 
 %% Simulation closed loop
+exp_name = 99;
+
 plot_bool = 1;
 simP.wind_ref = 0;
 PID_11_Sim = matlab_PID_paremters(PID_11);
@@ -116,7 +120,11 @@ PID_22_Sim = matlab_PID_paremters(PID_22);
 PID_22_Sim.N = .01;
 simP.t_simulation = 1600; % Time for simulation [s]
 
-simP.wind_t = 200;
+% Saturation blocks
+simP.beta_sat = [25,-25];
+simP.alpha_sat = [0.7,-0.3];
+
+simP.wind_t = 1200;
 simP.noise_power_wind = [0];
 simP.wind_final = 0;
 
@@ -129,7 +137,7 @@ simP.omega_final = -200;
 
 [y,e,u,u_hat,r,t,simOut] = simulate_PID_closed_loop();
 if plot_bool
-    plot_PID_closed_loop(y,e,u,u_hat,r,t)
+    plot_PID_closed_loop(y,e,u,u_hat,r,t,simP,exp_name)
 end
 
 disp('##### Scenario step change #####')
